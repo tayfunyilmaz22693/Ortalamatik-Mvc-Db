@@ -1,0 +1,91 @@
+﻿@using Ortalama.Models.Entities;
+@model Lesson;
+
+<h3 id="h3-title">Add Lesson</h3>
+<form method="post" id="form" action="/add-lesson">
+    @Html.AntiForgeryToken()
+    <label>Lesson Name:</label>
+    <input asp-for="LessonName" id="lesson-name" class="form-control" placeholder="Enter lesson name">
+    <div style="height: 3px;"></div>
+    <div class="row">
+        <div class="col-6">
+            <label>Credit:</label>
+            <input asp-for="LessonCredit" id="lesson-credit" class="form-control" placeholder="Enter lesson credit">
+        </div>
+        <div class="col-6">
+            <label>Lesson Note:</label>
+            <input asp-for="LessonNote" id="lesson-note" class="form-control" placeholder="Enter lesson note">
+        </div>
+    </div>
+    <br>
+    <div style="float: right;">
+        <button type="submit" id="submit-button" class="btn btn-success">Add</button>
+    </div>
+</form>
+
+<hr>
+<div style="height: 10px;"></div>
+<h3>All Lessons</h3>
+<table class="table table-borderless">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Lesson</th>
+            <th scope="col">Note</th>
+            <th scope="col">Credit</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.allLessons)
+        {
+            <tr>
+
+                <th scope="row">@item.Id</th>
+                <td>@item.LessonName</td>
+                <td>@item.LessonNote</td>
+                <td>@item.LessonCredit</td>
+                <td>
+                    <a href="/delete-lesson/@item.Id" id="delete-button" class="btn btn-danger">Delete</a>
+                    <a class="btn btn-warning" id="edit-button"
+                        onclick="EditLesson('@item.Id', '@item.LessonName', '@item.LessonNote', '@item.LessonCredit');">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function EditLesson(id, lessonName, lessonNote, lessonCredit) {
+        var form = $("#form");
+        var submit_button = $("#submit-button");
+        var edit_button = $("#edit-button");
+        $("#lesson-name").val(lessonName);
+        $("#lesson-note").val(lessonNote);
+        $("#lesson-credit").val(lessonCredit);
+        var title = $("#h3-title");
+        if (form.attr("action") == "/add-lesson") {
+            form.attr("action", "/edit-lesson/" + id);
+            submit_button.removeClass("btn-success");
+            submit_button.addClass("btn-warning");
+            edit_button.removeClass("btn-warning");
+            edit_button.addClass("btn-secondary");
+            submit_button.text("Update");
+            edit_button.text("Cancel");
+            title.text("Edit Lesson");
+        }
+        else if (form.attr("action") == "/edit-lesson/" + id) {
+            form.attr("action", "/add-lesson");
+            submit_button.removeClass("btn-warning");
+            submit_button.addClass("btn-success");
+            submit_button.text("Add");
+            edit_button.removeClass("btn-secondary");
+            edit_button.addClass("btn-warning");
+            edit_button.text("Edit");
+            $("#lesson-name").val("");
+            $("#lesson-note").val("");
+            $("#lesson-credit").val("");
+            title.text("Add Lesson");
+        }
+    }
+</script>
